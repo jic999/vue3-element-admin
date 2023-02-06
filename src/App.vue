@@ -1,7 +1,10 @@
 <script setup>
 import { RouterView } from 'vue-router'
+import ElProvider from '@/components/common/ElProvider.vue'
 </script>
 
 <template>
-  <RouterView />
+  <ElProvider>
+    <RouterView />
+  </ElProvider>
 </template>

@@ -4,7 +4,7 @@ import AppHeader from './header/index.vue'
 </script>
 
 <template>
-  <el-container>
+  <el-container class="homepage">
     <el-aside>
       <AppSide />
     </el-aside>
@@ -20,6 +20,11 @@ import AppHeader from './header/index.vue'
 </template>
 
 <style lang="scss" scoped>
+.homepage {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
 .el-aside {
   width: 210px;
   height: 100vh;

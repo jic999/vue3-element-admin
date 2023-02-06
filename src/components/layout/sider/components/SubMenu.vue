@@ -15,25 +15,27 @@ function menuChange(name) {
 </script>
 
 <template>
-  <!-- 多级菜单 -->
-  <template v-if="!menu.isSingle">
-    <el-sub-menu v-if="menu.children" :index="menu.name">
-      <template #title>
+  <template v-if="!menu.isHidden">
+    <!-- 多级菜单 -->
+    <template v-if="!menu.isSingle">
+      <el-sub-menu v-if="menu.children" :index="menu.name">
+        <template #title>
+          <TheIcon :icon="menu.meta?.icon" :size="16" />
+          <span>{{ menu.meta?.title }}</span>
+        </template>
+        <sub-menu v-for="menuItem in menu.children" :key="menuItem.name" :menu="menuItem"></sub-menu>
+      </el-sub-menu>
+      <el-menu-item v-else :index="menu.name" @click="menuChange(menu.name)">
         <TheIcon :icon="menu.meta?.icon" :size="16" />
-        <span>{{ menu.meta?.title }}</span>
-      </template>
-      <sub-menu v-for="menuItem in menu.children" :key="menuItem.name" :menu="menuItem"></sub-menu>
-    </el-sub-menu>
+        <template #title>{{ menu.meta?.title }}</template>
+      </el-menu-item>
+    </template>
+    <!-- 单级菜单 -->
     <el-menu-item v-else :index="menu.name" @click="menuChange(menu.name)">
       <TheIcon :icon="menu.meta?.icon" :size="16" />
       <template #title>{{ menu.meta?.title }}</template>
     </el-menu-item>
   </template>
-  <!-- 单级菜单 -->
-  <el-menu-item v-else :index="menu.name" @click="menuChange(menu.name)">
-    <TheIcon :icon="menu.meta?.icon" :size="16" />
-    <template #title>{{ menu.meta?.title }}</template>
-  </el-menu-item>
 </template>
 
 <style lang="scss" scoped>

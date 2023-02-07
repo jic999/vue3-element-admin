@@ -1,7 +1,5 @@
 <script setup>
-import TheIcon from '@/components/icon/TheIcon.vue'
-import { computed, ref } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ref, watch } from 'vue'
 import { $message } from '@/utils/feedback'
 
 const props = defineProps({
@@ -23,20 +21,35 @@ const props = defineProps({
   },
 })
 const emit = defineEmits(['handleCancel', 'refresh'])
-const form = computed(() => props.formData)
+// 将绑定值转为 { key: value } 否则表单验证无效
+const form = ref(transFormData())
 const isLoading = ref(false)
-function getParams() {
-  const params = {}
-  for (let key in form.value) {
-    params[key] = form.value[key].value
+const $form = ref({})
+// TODO 待优化
+watch(
+  props.formData,
+  () => {
+    form.value = transFormData()
+    // 每次切换action后 重置表单验证结果
+    $form.value.resetFields()
+  },
+  { deep: true }
+)
+function transFormData() {
+  const newForm = {}
+  for (let key in props.formData) {
+    newForm[key] = props.formData[key].value
   }
-  return params
+  return newForm
 }
+
 async function handleCommit() {
+  const passValidate = await $form.value.validate()
+  if (!passValidate) return
   isLoading.value = true
   const actions = {
-    create: () => props.reqCreate(getParams()),
-    update: () => props.reqUpdate(getParams()),
+    create: () => props.reqCreate(form.value),
+    update: () => props.reqUpdate(form.value),
   }
   try {
     isLoading.value = true
@@ -66,12 +79,8 @@ function singleImgChange(file, files) {
   const reader = new FileReader()
   reader.readAsArrayBuffer(file.raw)
   reader.onload = () => {
-    form.value[curSingleImgKey].value = reader.result
-    ElMessage({
-      type: 'success',
-      message: '上传成功',
-      icon: h(TheIcon, { icon: 'ep:success-filled', size: 14 }),
-    })
+    form.value[curSingleImgKey] = reader.result
+    $message.success('上传成功')
   }
   // 隐藏上传按钮
   if (files.length > 0) {
@@ -87,30 +96,30 @@ function singleImgRemove(file, files) {
 </script>
 
 <template>
-  <el-form ref="smart-form" :model="form" label-width="auto" :disabled="action === 'view'" v-bind="$attrs">
-    <template v-for="(item, key) in form" :key="key">
-      <el-form-item :label="item.label">
+  <el-form ref="$form" :model="form" label-width="auto" :disabled="action === 'view'" v-bind="$attrs">
+    <template v-for="(item, key) in formData" :key="key">
+      <el-form-item :label="item.label" :prop="key" :rules="item.rules">
         <!--字符输入-->
         <template v-if="item.type === 'StringInput'">
-          <el-input v-model="form[key].value" v-bind="item.attrs" />
+          <el-input v-model="form[key]" v-bind="item.attrs" />
         </template>
         <!--数字输入-->
         <template v-else-if="item.type === 'NumberInput'">
-          <el-input-number v-model="form[key].value" v-bind="item.attrs" />
+          <el-input-number v-model="form[key]" v-bind="item.attrs" />
         </template>
         <!--选择器  -->
         <template v-else-if="item.type === 'Selector'">
-          <el-select v-model="form[key].value" v-bind="item.attrs">
+          <el-select v-model="form[key]" v-bind="item.attrs">
             <el-option v-for="option in item.options" :key="option.label" :label="option.label" :value="option.value" />
           </el-select>
         </template>
         <!--级联选择器-->
         <template v-else-if="item.type === 'Cascader'">
-          <el-cascader v-model="form[key].value" :options="item.options" v-bind="item.attrs" />
+          <el-cascader v-model="form[key]" :options="item.options" v-bind="item.attrs" />
         </template>
         <!--单选框-->
         <template v-else-if="item.type === 'Radio'">
-          <el-radio-group v-model="form[key].value" v-bind="item.attrs">
+          <el-radio-group v-model="form[key]" v-bind="item.attrs">
             <el-radio
               v-for="option in item.options"
               :key="option.value"
@@ -123,7 +132,7 @@ function singleImgRemove(file, files) {
         </template>
         <!--多选框 / 绑定Array-->
         <template v-else-if="item.type === 'Checkbox'">
-          <el-checkbox-group v-model="form[key].value" v-bind="item.attrs">
+          <el-checkbox-group v-model="form[key]" v-bind="item.attrs">
             <el-checkbox
               v-for="option in item.options"
               :key="option.label"

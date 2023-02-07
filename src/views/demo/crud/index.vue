@@ -23,8 +23,13 @@ const formData = {
   },
   name: {
     label: '姓名',
-    value: '',
+    value: null,
     type: 'StringInput',
+    rules: {
+      required: true,
+      trigger: ['blur'],
+      message: '请输入书体名称',
+    },
   },
   gender: {
     label: '性别',

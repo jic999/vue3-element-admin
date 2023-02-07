@@ -66,8 +66,13 @@ const formData = {
   },
   name: {
     label: '姓名',
-    value: '',
+    value: null,
     type: 'StringInput',
+    rules: {
+      required: true,
+      message: '请输入姓名',
+      trigger: 'blur',
+    },
   },
   gender: {
     label: '性别',
@@ -83,16 +88,30 @@ const formData = {
         value: 0,
       },
     ],
+    rules: {
+      required: true,
+      message: '请选择性别',
+    },
   },
   age: {
     label: '年龄',
     value: null,
     type: 'NumberInput',
+    rules: {
+      required: true,
+      message: '请输入年龄',
+      trigger: 'blur',
+    },
   },
   province: {
     label: '省份',
     value: null,
     type: 'StringInput',
+    rules: {
+      required: true,
+      message: '请输入省份',
+      trigger: 'blur',
+    },
   },
   isVip: {
     label: '是否Vip',
@@ -108,6 +127,10 @@ const formData = {
         value: 0,
       },
     ],
+    rules: {
+      required: true,
+      message: '请选择是否vip',
+    },
   },
   description: {
     label: '个人介绍',
@@ -115,10 +138,79 @@ const formData = {
     type: 'StringInput',
     attrs: {
       type: 'textarea',
-      autosize: { minRows: 3 },
+      autosize: { minRows: 3, maxRows: 5 },
     },
   },
 }
+
+import { reactive, ref } from 'vue'
+
+const formSize = ref('default')
+const ruleFormRef = ref()
+const ruleForm = reactive({
+  name: 'Hello',
+  region: '',
+  count: '',
+  date1: '',
+  date2: '',
+  delivery: false,
+  type: [],
+  resource: '',
+  desc: '',
+})
+
+const rules = reactive({
+  name: [
+    { required: true, message: 'Please input Activity name', trigger: 'blur' },
+    { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
+  ],
+  region: [
+    {
+      required: true,
+      message: 'Please select Activity zone',
+      trigger: 'change',
+    },
+  ],
+  count: [
+    {
+      required: true,
+      message: 'Please select Activity count',
+      trigger: 'change',
+    },
+  ],
+  date1: [
+    {
+      type: 'date',
+      required: true,
+      message: 'Please pick a date',
+      trigger: 'change',
+    },
+  ],
+  date2: [
+    {
+      type: 'date',
+      required: true,
+      message: 'Please pick a time',
+      trigger: 'change',
+    },
+  ],
+  type: [
+    {
+      type: 'array',
+      required: true,
+      message: 'Please select at least one activity type',
+      trigger: 'change',
+    },
+  ],
+  resource: [
+    {
+      required: true,
+      message: 'Please select activity resource',
+      trigger: 'change',
+    },
+  ],
+  desc: [{ required: true, message: 'Please input activity form', trigger: 'blur' }],
+})
 </script>
 
 <template>

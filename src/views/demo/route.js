@@ -29,5 +29,14 @@ export default {
         icon: 'ic:baseline-table-view',
       },
     },
+    {
+      name: 'SmartCrud',
+      path: '/smart-crud',
+      component: () => import('@/views/demo/crud/ExampleView.vue'),
+      meta: {
+        title: 'SmartCrud',
+        icon: 'ic:baseline-table-view',
+      },
+    },
   ],
 }

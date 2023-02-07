@@ -7,11 +7,10 @@ const ACTIONS = {
   view: '查看',
 }
 
-export default function ({ name, formData, reqCreate, reqDelete, reqUpdate, refresh }) {
+export default function ({ name, formData, reqDelete, refresh }) {
   const dialogVisible = ref(false)
   const dialogAction = ref('')
   const dialogTitle = computed(() => ACTIONS[dialogAction.value] + name)
-  const dialogLoading = ref(false)
   const newFormData = ref(formData)
   const initForm = {}
 
@@ -36,7 +35,7 @@ export default function ({ name, formData, reqCreate, reqDelete, reqUpdate, refr
   }
   function handleDelete(id) {
     $messageBox
-      .confirm('数据删除后无法恢复，请谨慎操作', '提醒', {
+      .confirm('数据删除后无法恢复，请谨慎操作', '提示', {
         type: 'warning',
         confirmButtonText: '确认',
         cancelButtonText: '取消',
@@ -62,7 +61,6 @@ export default function ({ name, formData, reqCreate, reqDelete, reqUpdate, refr
     dialogVisible,
     dialogAction,
     dialogTitle,
-    dialogLoading,
     newFormData,
     handleCreate,
     handleUpdate,

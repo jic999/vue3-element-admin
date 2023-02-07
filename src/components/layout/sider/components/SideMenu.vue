@@ -6,6 +6,7 @@ const router = useRouter()
 
 const menus = router.options.routes.filter((route) => route.name && !route.isHidden)
 menus.sort((a, b) => (a.meta?.order ?? 0) - (b.meta?.order ?? 0))
+// TODO issue: 刷新页面后 菜单会跳转到第一栏
 </script>
 
 <template>

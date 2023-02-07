@@ -1,9 +1,9 @@
 <script setup>
-import { computed, h, ref } from 'vue'
-import SmartTable from '@/components/table/SmartTable.vue'
+import { h, ref } from 'vue'
+import SmartTable from '@/components/crud/table/SmartTable.vue'
 import { ElButton, ElSwitch } from 'element-plus'
 import { renderIcon } from '@/utils/common/icon'
-import SmartForm from '@/components/form/SmartForm.vue'
+import SmartForm from '@/components/crud/form/SmartForm.vue'
 import useCrud from '@/hooks/useCrud'
 import userApi from '@/api/user/index'
 
@@ -78,22 +78,13 @@ const formData = {
 }
 const $table = ref({})
 /*表单相关*/
-const {
-  dialogVisible,
-  dialogTitle,
-  dialogAction,
-  dialogLoading,
-  newFormData,
-  handleCreate,
-  handleView,
-  handleUpdate,
-  handleDelete,
-} = useCrud({
-  name: '用户',
-  formData,
-  reqDelete: userApi.reqDelete,
-  refresh: () => $table.value?.handleQuery(),
-})
+const { dialogVisible, dialogTitle, dialogAction, newFormData, handleCreate, handleView, handleUpdate, handleDelete } =
+  useCrud({
+    name: '用户',
+    formData,
+    reqDelete: userApi.reqDelete,
+    refresh: () => $table.value?.handleQuery(),
+  })
 function toggleDialog() {
   dialogVisible.value = !dialogVisible.value
 }
@@ -113,7 +104,7 @@ const columns = [
   {
     label: '是否vip',
     prop: 'isVip',
-    width: 100,
+    width: 120,
     render(row, column, index) {
       return h(ElSwitch, { modelValue: row.isVip === 1 })
     },
@@ -145,8 +136,6 @@ const columns = [
     },
   },
 ]
-
-const switchOn = ref(true)
 </script>
 
 <template>
@@ -167,7 +156,7 @@ const switchOn = ref(true)
     ref="$table"
     :get-data="getData"
     :columns="columns"
-    :form-data="formData"
+    title="用户"
     :handle-create="handleCreate"
     :is-pagination="true"
   />

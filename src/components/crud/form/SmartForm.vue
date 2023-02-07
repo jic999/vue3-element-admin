@@ -1,18 +1,9 @@
 <script setup>
-import { computed, reactive, ref } from 'vue'
-import 'element-plus/es/components/message/style/css'
-import { ElMessage } from 'element-plus'
 import TheIcon from '@/components/icon/TheIcon.vue'
+import { computed, ref } from 'vue'
+import { ElMessage } from 'element-plus'
 import { $message } from '@/utils/feedback'
 
-const param = {
-  label: '表头',
-  value: '值',
-  options: [], // 可选
-  // stringInput | numberInput | selector | cascader | radio | checkBoxGroup | checkBox | singleImgUpload
-  type: '表单类型',
-  attrs: {}, // 表单属性
-}
 const props = defineProps({
   formData: {
     type: Object,
@@ -33,6 +24,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['handleCancel', 'refresh'])
 const form = computed(() => props.formData)
+const isLoading = ref(false)
 function getParams() {
   const params = {}
   for (let key in form.value) {
@@ -40,26 +32,30 @@ function getParams() {
   }
   return params
 }
-function handleSave() {
-  switch (props.action) {
-    case 'create':
-      props.reqCreate(getParams()).then((res) => {
-        $message.success(res.msg)
-        emit('refresh')
-        emit('handleCancel')
-      })
-      break
-    case 'update':
-      props.reqUpdate(getParams()).then((res) => {
-        $message.success(res.msg)
-        emit('refresh')
-        emit('handleCancel')
-      })
-      break
-    default:
-      console.error('error action!')
+async function handleCommit() {
+  isLoading.value = true
+  const actions = {
+    create: () => props.reqCreate(getParams()),
+    update: () => props.reqUpdate(getParams()),
+  }
+  try {
+    isLoading.value = true
+    const { code, data, msg } = await actions[props.action]()
+    if (code === 0) {
+      emit('refresh')
+      $message.success(msg)
+      emit('handleCancel')
+    } else {
+      throw new Error('请求失败')
+    }
+  } catch (error) {
+    $message.error('请求失败，请稍后再试')
+  } finally {
+    isLoading.value = false
   }
 }
+
+/*------------表单相关------------*/
 /* 单图上传 */
 let curSingleImgKey = ''
 function pickSingleImg(key) {
@@ -160,7 +156,7 @@ function singleImgRemove(file, files) {
   </el-form>
   <div v-if="action !== 'view'" class="form-footer">
     <div>
-      <el-button type="primary" @click="handleSave()">提交</el-button>
+      <el-button type="primary" :loading="isLoading" @click="handleCommit()">提交</el-button>
       <el-button plain @click="$emit('handleCancel')">取消</el-button>
     </div>
   </div>

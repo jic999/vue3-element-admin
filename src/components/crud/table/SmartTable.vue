@@ -1,7 +1,8 @@
 <script setup>
 import { onBeforeMount, ref, watch } from 'vue'
-import { $message } from '@/utils/feedback'
 import TheIcon from '@/components/icon/TheIcon.vue'
+import { $message } from '@/utils/feedback'
+
 const props = defineProps({
   getData: {
     type: Function,
@@ -11,18 +12,21 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  title: {
+    type: String,
+    required: true,
+  },
   handleCreate: {
     type: Function,
     default: undefined,
   },
-  tableAttrs: {
-    type: Object,
-    default: undefined,
-  },
-  // Object { pageNo, pageSize }
   isPagination: {
     type: Boolean,
     default: false,
+  },
+  tableAttrs: {
+    type: Object,
+    default: undefined,
   },
   paginationAttrs: {
     type: Object,
@@ -34,23 +38,29 @@ const isLoading = ref(true)
 
 const tableData = ref([])
 async function handleQuery() {
-  isLoading.value = true
-  const { data } = await props.getData(pageInfo.value)
-  if (props.isPagination) {
-    pageInfo.value.total = data.total
-    tableData.value = data.records
-  } else {
-    tableData.value = data
+  try {
+    isLoading.value = true
+    const { code, data } = await props.getData(pageInfo.value)
+    if (0 !== code) throw new Error()
+    if (props.isPagination) {
+      pageInfo.value.total = data.total
+      tableData.value = data.records
+    } else {
+      tableData.value = data
+    }
+  } catch (error) {
+    $message.error('请求失败，请稍后再试')
+  } finally {
+    isLoading.value = false
   }
-  isLoading.value = false
 }
-function handleSearch(isInit) {
+function handleSearch(isInit = false) {
   if (isInit) pageInfo.value.keyword = ''
   pageInfo.value.pageNo = 1
   handleQuery()
 }
 
-/*分页*/
+/*------------分页------------*/
 const pageInfo = ref({
   pageNo: 1,
   pageSize: 10,
@@ -58,13 +68,13 @@ const pageInfo = ref({
   total: 0,
 })
 watch(
-  pageInfo.value,
-  (val) => {
+  [() => pageInfo.value.pageNo, () => pageInfo.value.pageSize],
+  () => {
     handleQuery()
   },
   { deep: true }
 )
-
+/*------------------------*/
 onBeforeMount(() => {
   handleQuery()
 })
@@ -72,25 +82,16 @@ defineExpose({
   handleQuery,
   handleSearch,
 })
-const param = {
-  label: '表头',
-  value: '值',
-  options: [], // 可选
-  // stringInput | numberInput | selector | cascader | radio | checkBoxGroup | checkBox | singleImgUpload
-  type: '表单类型',
-  attrs: {}, // 表单属性
-  childAttrs: [{}, {}], // 子组件属性
-}
 </script>
 
 <template>
   <el-card shadow="never">
     <template #header>
       <div class="table-header">
-        <div class="table-header__title">用户管理</div>
+        <div class="table-header__title">{{ title }}管理</div>
         <div class="table-header__search">
-          <el-input v-model="pageInfo.keyword" class="table-header__input" />
-          <el-button class="table-header__button" type="primary" @click="handleSearch">搜索</el-button>
+          <el-input v-model.lazy="pageInfo.keyword" class="table-header__input" />
+          <el-button class="table-header__button" type="primary" @click="handleSearch()">搜索</el-button>
           <el-button class="table-header__button" plain @click="handleSearch(1)">重置</el-button>
         </div>
         <div>
@@ -98,7 +99,7 @@ const param = {
             <template #icon>
               <TheIcon icon="ep:plus" />
             </template>
-            新增用户
+            新增{{ title }}
           </el-button>
         </div>
       </div>

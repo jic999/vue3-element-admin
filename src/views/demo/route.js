@@ -6,7 +6,7 @@ export default {
   component: Layout,
   redirect: '/demo/component',
   meta: {
-    title: 'Demo',
+    title: '示例页面',
     icon: 'ic:round-code',
     order: 3,
   },
@@ -23,16 +23,16 @@ export default {
     {
       name: 'Crud',
       path: 'crud',
-      component: () => import('@/views/demo/crud/index.vue'),
+      component: () => import('@/views/demo/crud/CrudFirst.vue'),
       meta: {
         title: 'crud',
         icon: 'ic:baseline-table-view',
       },
     },
     {
-      name: 'SmartCrud',
-      path: '/smart-crud',
-      component: () => import('@/views/demo/crud/ExampleView.vue'),
+      name: 'Crud1',
+      path: '/crud1',
+      component: () => import('@/views/demo/crud/CrudSmart.vue'),
       meta: {
         title: 'SmartCrud',
         icon: 'ic:baseline-table-view',

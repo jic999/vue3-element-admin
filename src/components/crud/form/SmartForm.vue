@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { computed, reactive, ref, toRefs, watch } from 'vue'
 import { $message } from '@/utils/feedback'
 
 const props = defineProps({
@@ -25,16 +25,14 @@ const emit = defineEmits(['handleCancel', 'refresh'])
 const form = ref(transFormData())
 const isLoading = ref(false)
 const $form = ref({})
-// TODO 待优化
-watch(
-  props.formData,
-  () => {
-    form.value = transFormData()
-    // 每次切换action后 重置表单验证结果
-    $form.value.resetFields()
-  },
-  { deep: true }
-)
+// * 为减小性能消耗 只监听fromData的value
+const formCopy = computed(() => transFormData())
+// * formData改变后 对 form和验证结果进行更新
+watch(formCopy, (val) => {
+  form.value = transFormData()
+  // 每次切换action后 重置表单验证结果
+  $form.value.resetFields()
+})
 function transFormData() {
   const newForm = {}
   for (let key in props.formData) {

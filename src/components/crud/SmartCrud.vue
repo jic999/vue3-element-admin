@@ -37,6 +37,10 @@ const props = defineProps({
     type: Object,
     default: undefined,
   },
+  dialogStyle: {
+    type: Object,
+    default: undefined,
+  },
 })
 const columns = computed(() => props.columns)
 /*表格相关*/
@@ -55,6 +59,10 @@ const { dialogVisible, dialogTitle, dialogAction, newFormData, handleCreate, han
 function toggleDialog() {
   dialogVisible.value = !dialogVisible.value
 }
+const dialogStyle = computed(() => {
+  if (props.dialogStyle) return props.dialogStyle
+  return { width: '600px' }
+})
 defineExpose({
   handleView,
   handleUpdate,
@@ -63,7 +71,7 @@ defineExpose({
 </script>
 
 <template>
-  <el-dialog v-model="dialogVisible" style="width: 600px">
+  <el-dialog v-model="dialogVisible" :style="dialogStyle">
     <template #header>
       <div style="font-size: 18px" @click="toggleDialog">{{ dialogTitle }}</div>
     </template>

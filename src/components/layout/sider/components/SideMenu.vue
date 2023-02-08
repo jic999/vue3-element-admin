@@ -1,16 +1,17 @@
 <script setup>
 import SubMenu from '@/components/layout/sider/components/SubMenu.vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { onBeforeMount, onMounted, ref } from 'vue'
 
 const router = useRouter()
-
+const route = useRoute()
 const menus = router.options.routes.filter((route) => route.name && !route.isHidden)
 menus.sort((a, b) => (a.meta?.order ?? 0) - (b.meta?.order ?? 0))
-// TODO issue: 刷新页面后 菜单会跳转到第一栏
+const defaultActive = ref(route.name)
 </script>
 
 <template>
-  <el-menu :default-active="menus[0].name" class="el-menu-vertical-demo" :unique-opened="true">
+  <el-menu :default-active="defaultActive" class="el-menu-vertical-demo" :unique-opened="true">
     <SubMenu v-for="menu in menus" :key="menu.path" :menu="menu" />
   </el-menu>
 </template>

@@ -18,7 +18,10 @@ body {
 a {
   cursor: pointer;
 }
-
+/*加载条颜色*/
+#nprogress .bar {
+  background-color: var(--el-color-primary) !important;
+}
 /* 滚动条样式 */
 ::-webkit-scrollbar {
   width: 8px;
@@ -32,7 +35,6 @@ a {
     background-color: #a8a8a8;
   }
 }
-
 .cus-scroll {
   overflow: auto;
   &::-webkit-scrollbar {

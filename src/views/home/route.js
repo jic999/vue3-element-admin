@@ -3,7 +3,7 @@ const Layout = () => import('@/components/layout/index.vue')
 export default {
   name: 'Home',
   path: '/',
-  redirect: '/',
+  redirect: '/home',
   component: Layout,
   isSingle: true,
   meta: {
@@ -13,8 +13,8 @@ export default {
   },
   children: [
     {
-      name: 'Home',
-      path: '',
+      name: 'HomeView',
+      path: 'home',
       component: () => import('@/views/home/index.vue'),
     },
   ],

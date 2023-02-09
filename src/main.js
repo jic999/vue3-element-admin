@@ -7,6 +7,7 @@ import { setupRouter } from '@/router'
 import '@/styles/index.scss'
 /*ElementPlus 样式引入*/
 import 'element-plus/es/components/switch/style/css'
+import 'element-plus/es/components/image/style/css'
 
 import '../mock/index'
 

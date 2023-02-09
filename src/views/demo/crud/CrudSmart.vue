@@ -2,7 +2,7 @@
 import SmartCrud from '@/components/crud/SmartCrud.vue'
 import userApi from '@/api/user/index'
 import { h } from 'vue'
-import { ElButton, ElSwitch } from 'element-plus'
+import { ElButton, ElSwitch, ElImage } from 'element-plus'
 import { renderIcon } from '@/utils/common/icon'
 
 const $crud = ref({})
@@ -18,6 +18,20 @@ const columns = [
     },
   },
   { label: '年龄', prop: 'age', width: 150 },
+  {
+    label: '头像',
+    prop: 'avatar',
+    width: 150,
+    render(row) {
+      return h(ElImage, {
+        src: row.avatar,
+        style: 'width: 60px; height: 60px',
+        previewSrcList: [row.avatar],
+        fit: 'cover',
+        previewTeleported: true,
+      })
+    },
+  },
   { label: '省份', prop: 'province', width: 200 },
   {
     label: '是否vip',

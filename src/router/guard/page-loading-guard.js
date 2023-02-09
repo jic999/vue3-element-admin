@@ -8,7 +8,4 @@ export function createPageLoadingGuard(router) {
   router.afterEach(() => {
     NProgress.done()
   })
-  router.onError(() => {
-    NProgress.error()
-  })
 }

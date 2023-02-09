@@ -7,17 +7,17 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  action: {
-    type: String,
-    required: true,
-  },
   reqCreate: {
     type: Function,
     required: true,
   },
+  action: {
+    type: String,
+    default: 'create',
+  },
   reqUpdate: {
     type: Function,
-    required: true,
+    default: undefined,
   },
 })
 const emit = defineEmits(['handleCancel', 'refresh'])
@@ -66,6 +66,12 @@ async function handleCommit() {
   }
 }
 
+function getForm() {
+  return form.value
+}
+defineExpose({
+  getForm,
+})
 /*------------表单相关------------*/
 /* 单图上传 */
 let curSingleImgKey = ''
@@ -75,7 +81,7 @@ function pickSingleImg(key) {
 function singleImgChange(file, files) {
   // 将图片转为 ArrayBuffer
   const reader = new FileReader()
-  reader.readAsArrayBuffer(file.raw)
+  reader.readAsBinaryString(file.raw)
   reader.onload = () => {
     form.value[curSingleImgKey] = reader.result
     $message.success('上传成功')
